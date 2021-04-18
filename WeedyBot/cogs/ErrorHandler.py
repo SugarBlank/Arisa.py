@@ -46,7 +46,12 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.MemberNotFound):
             embed = discord.Embed(color=discord.Color(0xf8f8ff), description="No user found with that name.")
-            await ctx.send(embed)
+            await ctx.send(embed=embed)
+            return
+
+        elif isinstance(error, commands.RoleNotFound):
+            embed = discord.Embed(color=discord.Color(0xf8f8ff), description="Role doesn't exist, are you sure you used the right name?")
+            await ctx.send(embed=embed)
             return
 
         elif isinstance(error, NSFWChannelRequired):
