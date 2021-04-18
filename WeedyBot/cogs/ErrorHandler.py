@@ -1,13 +1,9 @@
 from discord.ext import commands
-from discord.ext.commands import has_permissions, MissingPermissions
+from discord.ext.commands import MissingPermissions
 from discord.ext.commands import Cog
 from discord.ext.commands import BadArgument
-import traceback
-
+from discord.ext.commands.errors import NSFWChannelRequired
 import discord
-
-import asyncio
-from discord import member
 
 
 class ErrorHandler(commands.Cog):
@@ -18,7 +14,7 @@ class ErrorHandler(commands.Cog):
     async def on_ready(self):
         print("ErrorHandler Cog ready.")
 
-    @Cog.listener()
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
         if isinstance(error, MissingPermissions):
@@ -31,16 +27,17 @@ class ErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.CommandNotFound):
             await ctx.send(f"**{ctx.author}**, this command doesn't exist!")
+            return
 
         elif isinstance(error, commands.UserInputError):
             await ctx.send(f"{ctx.author}, user not found!")
-
+            return
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.send("Sorry I don't have permission!")
-
+            return
         elif isinstance(error, commands.DisabledCommand):
             await ctx.send("This command is disabled.")
-
+            return
         elif isinstance(error, discord.Forbidden):
             pass
 
@@ -48,7 +45,13 @@ class ErrorHandler(commands.Cog):
             await ctx.send("Missing required argument!")
 
         elif isinstance(error, commands.MemberNotFound):
-            await ctx.send("Member wasn't found!")
+            embed = discord.Embed(color=discord.Color(0xf8f8ff), description="No user found with that name.")
+            await ctx.send(embed)
+            return
+
+        elif isinstance(error, NSFWChannelRequired):
+            await ctx.send("You need to be in a NSFW channel!")
+            pass
 
 
 def setup(client):
