@@ -1,6 +1,8 @@
 from os.path import isfile
 from sqlite3 import connect
 
+# Most of this is taken from Carberra's Database setup in his tutorials.
+
 DB_PATH = "/home/scouri/Programming/Python/Weedy/WeedyBot/database/database.db"
 BUILD_PATH = "/home/scouri/Programming/Python/Weedy/WeedyBot/database/build.sql"
 
