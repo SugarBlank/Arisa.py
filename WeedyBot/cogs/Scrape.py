@@ -28,10 +28,13 @@ class Scrape(commands.Cog):
 
     @commands.command(pass_context=True, name="scrape", aliases=["gel", "s"], brief="Scrapes Gelbooru for a random image. Needs to be NSFW.")
     @commands.is_nsfw()
-    async def scrape(self, ctx, tag: str = None):
+    async def scrape(self, ctx, tag: str = None, count=1):
+        sent = 0
         try:
-            image = get_posts_gel(tag)
-            await ctx.send(image)
+            while count != sent:
+                image = get_posts_gel(tag)
+                sent += 1
+                await ctx.send(image)
         except ValueError:
             await ctx.send(f"{tag} isn't valid, try again.")
 
