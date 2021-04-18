@@ -30,7 +30,7 @@ class HelpMenu(ListPageSource):
         len_data = len(self.entries)
 
         embed = Embed(title="Help:",
-                      description="Welcome to Arisa help dialog!", colour=0xf8f8ff)
+                      description="Welcome to Weedy's help dialog!", colour=0xf8f8ff)
         embed.set_thumbnail(url=self.ctx.guild.me.avatar_url)
 
         embed.set_footer(text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} commands.")
@@ -60,7 +60,7 @@ class Help(commands.Cog):
                       description=syntax(command),
                       color=0xf8f8ff
                       )
-        embed.add_field(name="Command description:", value=command.help)
+        embed.add_field(name="Command description:", value=command.brief)
         await ctx.send(embed=embed)
 
 
