@@ -83,7 +83,7 @@ class Chan(Cog):
 
     @Cog.listener()
     async def on_ready(self):
-        print("Chan Cog Activated.")
+        print("Chan Cog ready.")
 
     boards = ['b', 'pol', 'v', 's4s']
 
