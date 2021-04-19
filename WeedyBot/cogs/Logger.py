@@ -6,7 +6,6 @@ from discord.ext.commands import has_permissions, MissingPermissions
 from cogs import Database
 
 # Logs information about users, like edited messages, deleted messages, or new
-# people that have joined the server
 
 
 class Logger(commands.Cog):
@@ -18,7 +17,7 @@ class Logger(commands.Cog):
     async def on_ready(self):
         Database.execute("CREATE TABLE IF NOT EXISTS logchannel \
             (Guild TEXT Default '', Channel TEXT Default '', ChannelID INT Default 0)")
-        print("Logger Cog has loaded.")
+        print("Logger Cog ready.")
 
     @commands.command(brief="Sets the log channel to chat you talked in.")
     @commands.has_permissions(administrator=True)
@@ -82,7 +81,6 @@ class Logger(commands.Cog):
 
         await bot_channel.send(embed=embed)
 
-
     @Cog.listener()
     async def on_member_update(self, before, after):
         logchannel = Database.row("SELECT * FROM logchannel WHERE Guild = ?",
@@ -92,7 +90,7 @@ class Logger(commands.Cog):
 
         if before.display_name != after.display_name:
             embed = discord.Embed(title="Member Update:",
-                                  description="Nickname Change:",
+                                  description="Nickname Change",
                                   color=0xf8f8ff,
                                   timestamp=datetime.datetime.utcnow())
 
@@ -100,11 +98,14 @@ class Logger(commands.Cog):
             embed.add_field(name="Nickname After:", value=after.display_name)
             embed.set_author(name=before)
 
-            await bot_channel.send(embed=embed)
+            try:
+                await bot_channel.send(embed=embed)
+            except Exception:
+                pass
 
         elif before.avatar_url != after.avatar_url:
             embed = discord.Embed(title="Member Update:",
-                                  description="Avatar Change: (Old to New)",
+                                  description="Avatar Change (Old to New)",
                                   color=0xf8f8ff,
                                   timestamp=datetime.datetime.utcnow())
 
