@@ -11,7 +11,7 @@ class Anime(commands.Cog):
     @Cog.listener()
     @commands.has_permissions(ban_members=True)
     async def on_ready(self):
-        print("Moderation Cog ready.")
+        print("Anime Cog ready.")
 
     @commands.command(brief="Sends cat pictures!")
     async def cat(self, ctx):
@@ -46,7 +46,6 @@ class Anime(commands.Cog):
             await ctx.send(embed=embed)
 
     @commands.command(brief="Questionable backgrounds, requires NSFW channel.")
-    @commands.is_nsfw()
     async def background(self, ctx, member: discord.Member = None):
         embed = discord.Embed(color=discord.Color(0xf8f8ff), description="nice wallpaper bro")
         embed.set_image(url=nekos.img("wallpaper"))
