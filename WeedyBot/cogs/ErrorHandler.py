@@ -58,6 +58,13 @@ class ErrorHandler(commands.Cog):
             await ctx.send("You need to be in a NSFW channel!")
             pass
 
+        elif isinstance(error, commands.ExpectedClosingQuoteError):
+            await ctx.send("You forgot to close the quote.")
+            pass
+
+        elif isinstance(error, commands.CommandInvokeError):
+            await ctx.send("Nothing here matches the value of the command.")
+
 
 def setup(client):
     client.add_cog(ErrorHandler(client))
