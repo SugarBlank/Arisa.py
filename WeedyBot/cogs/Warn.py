@@ -9,12 +9,11 @@ import discord.ext.commands.errors
 class Warn(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.warnlimit = 3
 
     @Cog.listener()
     async def on_ready(self):
-        Database.execute("CREATE TABLE IF NOT EXISTS userwarns (ModeratorID integer DEFAULT 0, UserID integer DEFAULT 0, Reasons string DEFAULT '', DateOfWarn integer DEFAULT 0, Guild string DEFAULT '')")
-        print("Warn Cog activated.")
+        Database.execute("CREATE TABLE IF NOT EXISTS userwarns (ModeratorID integer DEFAULT 0, UserID string DEFAULT '', Reasons string DEFAULT '', DateOfWarn integer DEFAULT 0, Guild string DEFAULT '')")
+        print("Warn Cog ready.")
 
     @commands.command(pass_context=True, name="warnlimit", aliases=["warnnumber"], brief="Sets the maximum amount of warns a user can have until they get banned.")
     @commands.has_permissions(administrator=True)
@@ -22,29 +21,26 @@ class Warn(commands.Cog):
         self.warnlimit = number
         await ctx.send("Warnlimit has been set to {number}.")
 
-    @commands.command(pass_context=True, name="warn", aliases=["w"], brief="Warns a user.")
+    @commands.command(pass_context=True, name="warn", aliases=["w"], brief="Warns a user. Use quotes around warn message for multiple words.")
     @commands.has_permissions(ban_members=True)
     async def warn(self, ctx, member: discord.Member, reason=None):
         moderator = ctx.author.display_name
         date = datetime.date.today()
         guild = ctx.message.guild
-
-        membername = member.display_name
-
         Database.execute("INSERT into userwarns(ModeratorID, UserID, Reasons, DateOfWarn, Guild) values(?, ?, ?, ?, ?)",
-                         moderator, membername, reason, date, str(guild))
+                         moderator, str(member), reason, date, str(guild))
         Database.commit()
-        await ctx.send(f"{membername} has been warned by {ctx.author.name} for {reason}.")
+        await ctx.send(f"{member} has been warned by {ctx.author.name} for {reason}.")
 
     @commands.command(pass_context=True, name="warnlog", aliases=["wl"], brief="Gets all the warns a user has.", inline=False)
-    async def warnlog(self, ctx, member: discord.Member):
-        member = member or ctx.author
+    async def warnlog(self, ctx, member: discord.Member = None):
 
-        membername = member.display_name
+        member = ctx.author if not member else member
+
         guild = ctx.message.guild
 
-        rows = Database.rows("SELECT ROWID, * FROM userwarns WHERE UserID = ? AND Guild = ? ORDER BY ROWID ASC",
-                             membername, str(guild))
+        rows = Database.rows("SELECT * FROM userwarns WHERE UserID = ? AND Guild = ? ORDER BY ROWID ASC",
+                             str(member), str(guild))
 
         embed = discord.Embed(
             ctx=ctx,
@@ -53,23 +49,27 @@ class Warn(commands.Cog):
         )
         embed.set_thumbnail(url=member.avatar_url)
 
-        value = '\n'.join(f'`{row[0]}` Warned on: **{row[4]}** by **{row[1]}** for:\n`{row[3]}`' for row in rows)
+        value = '\n'.join(f'Warned on: **{row[3]}** by **{row[0]}** for:\n`{row[2]}`' for row in rows)
         embed.add_field(name=f"Warnlog for **{member}**:", value=value, inline=True)
         embed.set_footer(icon_url=ctx.author.avatar_url, text=f"Requested by {ctx.author}")
         await ctx.send(embed=embed)
 
     @commands.command(pass_context=True, name="warnclear", aliases=["wc"], brief="Clears a warn from specified user.")
     @commands.has_permissions(ban_members=True)
-    async def warnclear(self, ctx, member: discord.Member, number):
+    async def warnclear(self, ctx, member: discord.Member, reason):
         date = datetime.date.today()
-        membername = member.display_name
+
         guild = ctx.message.guild
-        details = Database.rows("SELECT * FROM userwarns WHERE ROWID = ? AND UserID = ? AND Guild = ?",
-                                number, membername, str(guild))
+
+        details = Database.rows("SELECT * FROM userwarns WHERE Reasons = ? AND UserID = ? AND Guild = ?",
+                                str(reason), str(member), str(guild))
+
         detailsprint = '\n'.join(f'Warn Reason: **{detail[2]}** \nDate Warned: **{detail[3]}** \nWarned by: \
              **{detail[0]}** \nCleared by: **{ctx.author}** on **{date}**' for detail in details)
-        Database.execute("DELETE FROM userwarns WHERE ROWID = ? AND UserID = ? AND Guild = ?",
-                         number, membername)
+
+        Database.execute("DELETE FROM userwarns WHERE Reasons = ? AND UserID = ? AND Guild = ?",
+                         str(reason), str(member), str(guild))
+        Database.commit()
 
         embed = discord.Embed(
             ctx=ctx,
@@ -77,7 +77,7 @@ class Warn(commands.Cog):
             timestamp=ctx.message.created_at
         )
 
-        embed.add_field(name=f"Warn Cleaned for **{membername}**:", value=detailsprint)
+        embed.add_field(name=f"Warn Cleaned for **{member}**:", value=detailsprint)
         embed.set_thumbnail(url=member.avatar_url)
         await ctx.send(embed=embed)
 
