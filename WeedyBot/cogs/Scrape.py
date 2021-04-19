@@ -24,7 +24,7 @@ class Scrape(commands.Cog):
 
     @Cog.listener()
     async def on_ready(self):
-        print("Scrape cog is ready.")
+        print("Scrape Cog ready.")
 
     @commands.command(pass_context=True, name="scrape", aliases=["gel", "s"], brief="Scrapes Gelbooru for a random image. Needs to be NSFW.")
     @commands.is_nsfw()
