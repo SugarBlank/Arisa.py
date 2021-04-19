@@ -7,6 +7,7 @@ from discord.utils import get
 from discord.ext import menus
 from discord.ext.menus import MenuPages, ListPageSource
 
+
 def syntax(command):
     aliases = "/".join([str(command), *command.aliases])
     params = []
@@ -18,6 +19,7 @@ def syntax(command):
     params = ' '.join(params)
 
     return f"```{aliases} {params}```"
+
 
 class HelpMenu(ListPageSource):
     def __init__(self, ctx, data):
@@ -38,9 +40,8 @@ class HelpMenu(ListPageSource):
         for name, value, in fields:
             embed.add_field(name=name, value=value, inline=False)
 
-
         return embed
-    
+
     async def format_page(self, menu, entries):
         fields = []
 
@@ -48,9 +49,9 @@ class HelpMenu(ListPageSource):
             fields.append((entry.brief, syntax(entry)))
         return await self.write_page(menu, fields)
 
+
 class Help(commands.Cog):
 
-    
     def __init__(self, client):
         self.client = client
         self.client.remove_command("help")
@@ -62,7 +63,6 @@ class Help(commands.Cog):
                       )
         embed.add_field(name="Command description:", value=command.brief)
         await ctx.send(embed=embed)
-
 
     @command(name="help")
     async def show_help(self, ctx, cmd: Optional[str]):
@@ -77,11 +77,9 @@ class Help(commands.Cog):
             else:
                 await ctx.send("Command doesn't exist.")
 
-
     @Cog.listener()
     async def on_ready(self):
-        print("Help Cog loaded.")
-
+        print("Help Cog ready.")
 
 
 def setup(client):
