@@ -16,8 +16,6 @@
 - Sqlite3
 - Other Stuff
 
-[![Scouri's Server](https://discord.com/api/guilds/742556488425275443/widget.png?style=banner3)](https://discord.com/invite/FMxMHEQ)
-
 **Bot Invite**: `https://discord.com/api/oauth2/authorize?client_id=742546856571306106&permissions=8&scope=bot`
 
 ## Shoutouts:
