@@ -7,7 +7,7 @@ intents = discord.Intents.all()
 
 intents.members = True
 
-client = commands.Bot(command_prefix='?',
+client = commands.Bot(command_prefix=',',
                       case_insensitive=True,
                       intents=intents)
 
