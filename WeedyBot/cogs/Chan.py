@@ -88,7 +88,7 @@ class Chan(Cog):
     boards = ['b', 'pol', 'v', 's4s']
 
     @commands.group(aliases=['4chan'], invoke_without_command=True, brief="Gets random 4chan posts from boards.")
-    async def chan(self, ctx, board: str is None):
+    async def chan(self, ctx, board: str=None):
         try:
             # Replies random 4chan post.
             if board is None:
