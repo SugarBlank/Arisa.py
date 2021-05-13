@@ -62,7 +62,7 @@ async def _8ball(ctx, *, question):
 @client.event
 async def on_ready():
     print(f"\nLogged in as {client.user} - {client.user.id}\nDiscord Version: {discord.__version__}\n")
-    await client.change_presence(activity=discord.Game('Sanitizing the Lab (?help)'))
+    await client.change_presence(activity=discord.Game('Sanitizing the Lab (,help)'))
     print("Weedy logged in and booted.")
 
 
